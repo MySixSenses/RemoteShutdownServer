@@ -10,4 +10,7 @@ def home():
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 if __name__ == "__main__":
-    app.run()
+    debug = False
+    if os.getenv("DEBUG") != None and os.getenv("DEBUG").lower() == "true":
+        debug = True 
+    app.run(host='0.0.0.0', debug=debug)
