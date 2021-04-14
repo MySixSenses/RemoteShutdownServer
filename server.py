@@ -2,21 +2,25 @@ from flask import *
 import os
 import subprocess
 import sys
+import platform
 
 app = Flask(__name__)
+
 
 @app.route('/', methods = ['POST'])
 def home():
     """Renders the home page."""
     data = json.loads(request.data)
-    os.system(f"taskkill /im {data['run']} /f")
+    if platform.system() == "Windows":
+        os.system(f"taskkill /im {data['run']} /f")
+    elif platform.system() == "Darwin":
+        os.system(f"killall {data['run']}")
     return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
 @app.route('/getprocesses', methods = ['GET'])
 def getprocesses():
-    process = subprocess.check_output(["tasklist"])
+    process = subprocess.check_output(["tasklist"] if platform.system == "Windows" else ["ps", "-ax"])
     process = process.decode(sys.stdout.encoding)
-    print(str(process))
     return str(process), 200, {"ContentType":"application/text"}
     
 if __name__ == "__main__":
