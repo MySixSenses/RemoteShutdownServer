@@ -23,6 +23,7 @@ while True:
         r = requests.get(f"{ip}/getwindows")
         if r.status_code == 501:
             print("The server cannot handle the request, likely because the server isn't a Windows computer")
+            continue
         print(r.text)
     elif data == 3:
         process = input("What process to kill? ")
@@ -35,7 +36,7 @@ while True:
         print(f"Succesfully closed {process}")
     else:
         window = input("What window to close? ")
-        r = requests.post(f"{ip}/closewindow" json = {'wintoclose': window, 'password': password})
+        r = requests.post(f"{ip}/closewindow", json = {'wintoclose': window, 'password': password})
         if r.status_code == 401:
             print("The server understood your request, but could not do it because you didn't enter the correct password")
         if r.status_code == 501:
