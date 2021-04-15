@@ -37,7 +37,7 @@ def closewindow():
     top_windows = pywinauto.Desktop(backend="uia").windows()
     success = False
     for window in top_windows:
-        if data['wintoclose'] in window_text():
+        if data['wintoclose'] in window.window_text():
             window.close()
             success = True
     return json.dumps({'success': success}), 200 if success else 400, {'ContentType': 'application/json'}
@@ -49,7 +49,7 @@ def getwindows():
     top_windows = pywinauto.Desktop(backend="uia").windows()
     returnitem = []
     for window in top_windows:
-        returnitem.append(window_text())
+        returnitem.append(window.window_text())
     return '\n'.join(returnitem), 200, {'ContentType': 'application/text'}
 
 if __name__ == "__main__":
