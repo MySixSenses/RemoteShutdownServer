@@ -7,11 +7,18 @@ if platform.system() == "Windows":
     import pywinauto
 
 app = Flask(__name__)
-
-
+password = None
+args = sys.argv
+args = args.pop(0)
+if len(args) == 0:
+    print("No password was passed in after the script name, assuming no password.")
+else:
+    password = args[0]
 @app.route('/', methods = ['POST'])
 def closeprocess():
     data = json.loads(request.data)
+    if password is not None and data['password'] != password:
+        return json.dumps({'success': False}), 401, {"ContentType": 'application/json'}
     if platform.system() == "Windows":
         num = os.system(f"taskkill /im {data['run']} /f")
     elif platform.system() == "Darwin":
@@ -31,6 +38,8 @@ def getprocesses():
     
 @app.route("/closewindow", methods = ['POST'])
 def closewindow():
+    if password is not None and data['password'] != password:
+        return json.dumps({'success': False}), 401, {"ContentType": 'application/json'}
     data = json.loads(request.data)
     if platform.system() != "Windows":
         return json.dumps({'success': False}), 501, {'ContentType': 'application/json'}
