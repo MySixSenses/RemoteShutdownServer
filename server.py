@@ -5,10 +5,10 @@ import sys
 import platform
 if platform.system() == "Windows":
     import pywinauto
-
+debugmode = os.getenv("DEBUG") != None and os.getenv("DEBUG").lower() == "true"
 app = Flask(__name__)
 password = None
-args = sys.argv
+args = sys.argv.copy() 
 args = args.pop(0)
 if len(args) == 0:
     print("No password was passed in after the script name, assuming no password.")
@@ -32,7 +32,8 @@ def closeprocess():
 
 @app.route('/getprocesses', methods = ['GET'])
 def getprocesses():
-    process = subprocess.check_output(["tasklist"] if platform.system == "Windows" else ["ps", "-ax"])
+
+    process = subprocess.check_output(["tasklist"] if platform.system() == "Windows" else ["ps", "-ax"])
     process = process.decode(sys.getdefaultencoding())
     return str(process), 200, {"ContentType":"application/text", "charset": sys.getdefaultencoding()}
     
@@ -56,13 +57,8 @@ def getwindows():
     if platform.system() != "Windows":
         return json.dumps({'success': False}), 501, {'ContentType': 'application/json'}
     top_windows = pywinauto.Desktop(backend="uia").windows()
-    returnitem = []
-    for window in top_windows:
-        returnitem.append(window.window_text())
+    returnitem = [window.window_text() for window in top_windows]
     return '\n'.join(returnitem), 200, {'ContentType': 'application/text'}
 
 if __name__ == "__main__":
-    debug = False
-    if os.getenv("DEBUG") != None and os.getenv("DEBUG").lower() == "true":
-        debug = True 
-    app.run(host='0.0.0.0', debug=debug)
+    app.run(host='0.0.0.0', debug=debugmode)

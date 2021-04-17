@@ -7,7 +7,9 @@ if "http" not in ip:
 password = input("What password is used for authentication? You can skip this part if the target server does not implement a password. ")
                  
 while True:
-    data = input("Pick one of the following: \n\t[1] Get Processes\n\t[2] Get Windows\n\t[3] Close Process\n\t[4]Close Window")
+    data = input("Pick one of the following: \n[1] Get Processes\n[2] Get Windows\n[3] Close Process\n[4] Close Window\n")
+    if data.lower == "exit":
+        exit()
     try:
         data = int(data)
     except ValueError:
