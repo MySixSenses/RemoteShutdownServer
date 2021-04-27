@@ -3,17 +3,17 @@ import os
 import subprocess
 import sys
 import platform
+import time
+from threading import Thread
 if platform.system() == "Windows":
     import pywinauto
 debugmode = os.getenv("DEBUG") != None and os.getenv("DEBUG").lower() == "true"
 app = Flask(__name__)
-password = None
-args = sys.argv.copy() 
-args = args.pop(0)
-if len(args) == 0:
-    print("No password was passed in after the script name, assuming no password.")
+if os.path.isfile('password.txt'):
+    with open('password.txt', 'r') as f:
+        password = f.read()
 else:
-    password = args[0]
+    password = None
 @app.route('/', methods = ['POST'])
 def closeprocess():
     data = json.loads(request.data)
@@ -32,16 +32,15 @@ def closeprocess():
 
 @app.route('/getprocesses', methods = ['GET'])
 def getprocesses():
-
     process = subprocess.check_output(["tasklist"] if platform.system() == "Windows" else ["ps", "-ax"])
     process = process.decode(sys.getdefaultencoding())
     return str(process), 200, {"ContentType":"application/text", "charset": sys.getdefaultencoding()}
     
 @app.route("/closewindow", methods = ['POST'])
 def closewindow():
+    data = json.loads(request.data)
     if password is not None and data['password'] != password:
         return json.dumps({'success': False}), 401, {"ContentType": 'application/json'}
-    data = json.loads(request.data)
     if platform.system() != "Windows":
         return json.dumps({'success': False}), 501, {'ContentType': 'application/json'}
     top_windows = pywinauto.Desktop(backend="uia").windows()

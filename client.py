@@ -47,6 +47,6 @@ while True:
         if r.status_code == 400:
             print("Unsuccessful because there was no process to close, if you're on Windows this is likely because you did not append .exe to the end of the string")
             continue
-        print(f"Succesfully closed all windows with names containing: {process}")
+        print(f"Succesfully closed all windows with names containing: {window}")
 
 
