@@ -4,7 +4,8 @@ __pycache__/
 *$py.class
 #passwords
 password.txt
-
+#developer scripts
+dev.py
 # C extensions
 *.so
 # Venv Files
