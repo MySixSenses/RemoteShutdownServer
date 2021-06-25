@@ -12,7 +12,7 @@ dev.py
 bin/
 Scripts/
 include/
-lib/
+Lib/
 pyvenv.cfg
 # Distribution / packaging
 .Python
